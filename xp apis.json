@@ -1,0 +1,294 @@
+1. api to get users
+
+curl -X 'GET' \
+  'https://api.xpertfarmer.com/users' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWgyOWNxOHYwMDAwbDEwNDEzbmEzM3FyIiwidXNlclR5cGUiOiJ1c2VyIiwiaWF0IjoxNzY5MDEyMzczLCJleHAiOjE3Njk2MTcxNzN9.Ycuz5bgVK2yc68s_Q2HBvzy8LwRbrob73rTM0G9IN90'
+
+  response 
+  	
+Response body
+Download
+{
+  "data": [
+    {
+      "id": "cmjfmcuby0010qpwesa0a1mh6",
+      "firstName": "Bruno",
+      "middleName": "Omondi",
+      "lastName": "Omondi",
+      "gender": "Male",
+      "dob": "2000-01-12",
+      "residenceCounty": "Busia",
+      "residenceLocation": "Marachi North",
+      "constituency": "Kisumu East",
+      "residenceConstituency": "Butula",
+      "email": "omondibrunoh@gmail.com",
+      "phoneNumber": "254742494898",
+      "nationalId": "856235980",
+      "businessNumber": null,
+      "yearsOfExperience": 2,
+      "otp": null,
+      "otpExpiry": null,
+      "isVerified": true,
+      "createdAt": "2025-12-21T11:03:37.870Z",
+      "updatedAt": "2025-12-24T14:23:55.778Z",
+      "farms": [
+        {
+          "id": "cmjfmcuby0011qpwe8k3c9pp9",
+          "name": "Gray Bruno",
+          "county": "Kisumu",
+          "administrativeLocation": "Kajulu",
+          "size": 56,
+          "ownership": "Freehold",
+          "farmingTypes": [
+            "Dairy cattle",
+            "Beef cattle",
+            "Dairy and Meat goat",
+            "Sheep and Goats",
+            "Poultry",
+            "Rabbit",
+            "Pigs (Swine)"
+          ],
+          "userId": "cmjfmcuby0010qpwesa0a1mh6",
+          "createdAt": "2025-12-21T11:03:37.870Z",
+          "updatedAt": "2025-12-21T11:03:37.870Z"
+        }
+      ]
+    },
+  ]
+}
+
+2. apis to get farms
+curl -X 'GET' \
+  'https://api.xpertfarmer.com/farms' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWgyOWNxOHYwMDAwbDEwNDEzbmEzM3FyIiwidXNlclR5cGUiOiJ1c2VyIiwiaWF0IjoxNzY5MDEyMzczLCJleHAiOjE3Njk2MTcxNzN9.Ycuz5bgVK2yc68s_Q2HBvzy8LwRbrob73rTM0G9IN90'
+
+  {
+  "data": [
+    {
+      "id": "cmjfmcuby0011qpwe8k3c9pp9",
+      "name": "Gray Bruno",
+      "county": "Kisumu",
+      "administrativeLocation": "Kajulu",
+      "size": 56,
+      "ownership": "Freehold",
+      "farmingTypes": [
+        "Dairy cattle",
+        "Beef cattle",
+        "Dairy and Meat goat",
+        "Sheep and Goats",
+        "Poultry",
+        "Rabbit",
+        "Pigs (Swine)"
+      ],
+      "userId": "cmjfmcuby0010qpwesa0a1mh6",
+      "createdAt": "2025-12-21T11:03:37.870Z",
+      "updatedAt": "2025-12-21T11:03:37.870Z",
+      "user": {
+        "id": "cmjfmcuby0010qpwesa0a1mh6",
+        "firstName": "Bruno",
+        "lastName": "Omondi",
+        "phoneNumber": "254742494898",
+        "email": "omondibrunoh@gmail.com"
+      }
+    },
+  ]}
+
+  3.api to get employees in a farm
+
+  curl -X 'GET' \
+  'https://api.xpertfarmer.com/employees?farmId=cmhx1ogpa0005i6s6u08cmack' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWgyOWNxOHYwMDAwbDEwNDEzbmEzM3FyIiwidXNlclR5cGUiOiJ1c2VyIiwiaWF0IjoxNzY5MDEyMzczLCJleHAiOjE3Njk2MTcxNzN9.Ycuz5bgVK2yc68s_Q2HBvzy8LwRbrob73rTM0G9IN90'
+
+  response
+  {
+  "data": [
+    {
+      "id": "cmiz0paah000pi69y88r1buji",
+      "firstName": "Faith",
+      "middleName": "F",
+      "lastName": "Muiruri",
+      "phone": "+254712345805",
+      "emergencyContact": "07122345678",
+      "idNumber": "25803614",
+      "idPhoto": null,
+      "employeeType": "permanent",
+      "dateOfEmployment": "2025-12-09T00:00:00.000Z",
+      "endDate": null,
+      "role": "driver",
+      "customRole": null,
+      "paymentSchedule": "monthly",
+      "salary": 200,
+      "typeOfEngagement": null,
+      "workSchedule": null,
+      "pin": "$2b$10$elQehlu.AxMjXVnrByTJPujB22im2c.fyShAWw74iWbNuU4RaL2q.",
+      "otp": "175952",
+      "otpExpiry": "2025-12-09T20:23:08.056Z",
+      "isVerified": false,
+      "createdAt": "2025-12-09T20:13:08.058Z",
+      "updatedAt": "2025-12-09T20:13:08.058Z",
+      "farms": [
+        {
+          "id": "cmiz0paai000qi69yof90kn0n",
+          "employeeId": "cmiz0paah000pi69y88r1buji",
+          "farmId": "cmhx1ogpa0005i6s6u08cmack",
+          "createdAt": "2025-12-09T20:13:08.058Z",
+          "updatedAt": "2025-12-09T20:13:08.058Z",
+          "farm": {
+            "id": "cmhx1ogpa0005i6s6u08cmack",
+            "name": "Faith",
+            "county": "Bomet",
+            "administrativeLocation": "Kembu"
+          }
+        }
+      ],
+      "benefits": [
+        {
+          "id": "cmiz0paai000ri69ysfmrgw76",
+          "employeeId": "cmiz0paah000pi69y88r1buji",
+          "name": "nssf",
+          "amount": 1080,
+          "createdAt": "2025-12-09T20:13:08.058Z",
+          "updatedAt": "2025-12-09T20:13:08.058Z"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "pages": 1,
+    "hasNextPage": false,
+    "hasPrevPage": false
+  }
+}
+
+4. api to get livestock in a farm
+curl -X 'GET' \
+  'https://api.xpertfarmer.com/livestock?farmId=cmhx1ogpa0005i6s6u08cmack' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWgyOWNxOHYwMDAwbDEwNDEzbmEzM3FyIiwidXNlclR5cGUiOiJ1c2VyIiwiaWF0IjoxNzY5MDEyMzczLCJleHAiOjE3Njk2MTcxNzN9.Ycuz5bgVK2yc68s_Q2HBvzy8LwRbrob73rTM0G9IN90'
+
+5. api to get inventory in a farm
+
+  curl -X 'GET' \
+  'https://api.xpertfarmer.com/inventory?farmId=cmhx1ogpa0005i6s6u08cmack' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWgyOWNxOHYwMDAwbDEwNDEzbmEzM3FyIiwidXNlclR5cGUiOiJ1c2VyIiwiaWF0IjoxNzY5MDEyMzczLCJleHAiOjE3Njk2MTcxNzN9.Ycuz5bgVK2yc68s_Q2HBvzy8LwRbrob73rTM0G9IN90'
+
+6.  api to get sales in a farm
+  curl -X 'GET' \
+  'https://api.xpertfarmer.com/sales?farmId=cmhx1ogpa0005i6s6u08cmack' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWgyOWNxOHYwMDAwbDEwNDEzbmEzM3FyIiwidXNlclR5cGUiOiJ1c2VyIiwiaWF0IjoxNzY5MDEyMzczLCJleHAiOjE3Njk2MTcxNzN9.Ycuz5bgVK2yc68s_Q2HBvzy8LwRbrob73rTM0G9IN90'
+
+  {
+  "data": [
+    {
+      "id": "cmke9331u000jqpmv953kmi7e",
+      "farmId": "cmhx1ogpa0005i6s6u08cmack",
+      "name": "DA-000001",
+      "category": "meatGoats",
+      "breed": "Saanen",
+      "age": "26 years",
+      "weight": 35,
+      "price": 1580,
+      "status": "available",
+      "health": "excellent",
+      "lastCheckup": "2026-01-14",
+      "animalId": null,
+      "livestockId": "cmj38rg06000yi69yf49wmjcz",
+      "purpose": "Meat Production",
+      "feedingProgram": "Testing",
+      "milkProduction": null,
+      "pregnancyStatus": null,
+      "beefQuality": null,
+      "milkQuality": null,
+      "milkYield": null,
+      "milkingDate": null,
+      "homeUseQuantity": null,
+      "saleQuantity": null,
+      "quantity": 25,
+      "pricePerBird": 63.2,
+      "eggProductionRate": null,
+      "woolYield": null,
+      "milkProductionRate": null,
+      "notes": "Test1",
+      "images": [],
+      "saleDate": null,
+      "buyerName": null,
+      "buyerContact": null,
+      "buyerType": null,
+      "saleAmount": null,
+      "marketPrice": null,
+      "salePrice": null,
+      "paymentMethod": null,
+      "receiptNumber": null,
+      "saleNotes": null,
+      "attachments": [],
+      "createdAt": "2026-01-14T16:44:03.762Z",
+      "updatedAt": "2026-01-14T16:44:03.762Z",
+      "farm": {
+        "id": "cmhx1ogpa0005i6s6u08cmack",
+        "name": "Faith",
+        "county": "Bomet",
+        "administrativeLocation": "Kembu"
+      }
+    }]
+  }
+
+
+  api to login
+  curl -X 'POST' \
+  'https://api.xpertfarmer.com/auth/login' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "phoneNumber": "254791033018",
+  "pin": "0000"
+}'
+
+{
+  "user": {
+    "id": "cmh29cq8v0000l10413na33qr",
+    "firstName": "charles",
+    "middleName": "mwaniki",
+    "lastName": "mwaniki",
+    "gender": "Male",
+    "dob": "2025-10-22",
+    "residenceCounty": "Embu",
+    "residenceLocation": "Mbeti South",
+    "constituency": "Bumula",
+    "residenceConstituency": "Mbeere South",
+    "email": "ch@hotmail.com",
+    "phoneNumber": "254791033018",
+    "nationalId": "636366566",
+    "businessNumber": null,
+    "yearsOfExperience": 2,
+    "otp": null,
+    "otpExpiry": null,
+    "isVerified": true,
+    "createdAt": "2025-10-22T17:19:12.607Z",
+    "updatedAt": "2025-10-22T17:19:57.738Z",
+    "farms": [
+      {
+        "id": "cmh29cq8w0001l104o1qnpch4",
+        "name": "Charles",
+        "county": "Bungoma",
+        "administrativeLocation": "Khasoko",
+        "size": 5,
+        "ownership": "Freehold",
+        "farmingTypes": [
+          "Dairy cattle"
+        ],
+        "userId": "cmh29cq8v0000l10413na33qr",
+        "createdAt": "2025-10-22T17:19:12.607Z",
+        "updatedAt": "2025-10-22T17:19:12.607Z"
+      }
+    ]
+  },
+  "userType": "user",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWgyOWNxOHYwMDAwbDEwNDEzbmEzM3FyIiwidXNlclR5cGUiOiJ1c2VyIiwiaWF0IjoxNzY5MDEyMzczLCJleHAiOjE3Njk2MTcxNzN9.Ycuz5bgVK2yc68s_Q2HBvzy8LwRbrob73rTM0G9IN90"
+}
