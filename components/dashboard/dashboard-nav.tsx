@@ -33,6 +33,11 @@ const navItems = [
     href: "/dashboard/farms",
     icon: Tractor,
   },
+  {
+    label: "Billing",
+    href: "/dashboard/billing",
+    icon: Briefcase,
+  },
 ];
 
 export function DashboardNav() {

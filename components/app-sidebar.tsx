@@ -1,175 +1,143 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+  LayoutDashboard,
+  Users,
+  Tractor,
+  Briefcase,
+  Settings,
+  Sprout,
+  BarChart3,
+  HelpCircle,
+} from "lucide-react";
+import { useSession } from "next-auth/react";
 
-import { NavMain } from '@/components/nav-main'
-import { NavProjects } from '@/components/nav-projects'
-import { NavUser } from '@/components/nav-user'
-import { TeamSwitcher } from '@/components/team-switcher'
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from '@/components/ui/sidebar'
+} from "@/components/ui/sidebar";
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+// XpertFarmer specific data
+const xpertFarmerData = {
+  company: {
+    name: "XpertFarmer",
+    logo: Sprout,
+    plan: "Admin Portal",
   },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboard,
       isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
+      title: "Users",
+      url: "/dashboard/users",
+      icon: Users,
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
+      title: "Farms",
+      url: "/dashboard/farms",
+      icon: Tractor,
+    },
+    {
+      title: "Billing",
+      url: "/dashboard/billing",
+      icon: Briefcase,
+    },
+    {
+      title: "Analytics",
+      url: "/dashboard/analytics",
+      icon: BarChart3,
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "Farm Performance",
+          url: "/dashboard/analytics/farms",
         },
         {
-          title: "Get Started",
-          url: "#",
+          title: "User Engagement",
+          url: "/dashboard/analytics/users",
         },
         {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          title: "Revenue Reports",
+          url: "/dashboard/analytics/revenue",
         },
       ],
     },
     {
       title: "Settings",
-      url: "#",
-      icon: Settings2,
+      url: "/dashboard/settings",
+      icon: Settings,
       items: [
         {
           title: "General",
-          url: "#",
+          url: "/dashboard/settings/general",
         },
         {
-          title: "Team",
-          url: "#",
+          title: "Notifications",
+          url: "/dashboard/settings/notifications",
         },
         {
-          title: "Billing",
-          url: "#",
+          title: "Security",
+          url: "/dashboard/settings/security",
         },
         {
-          title: "Limits",
-          url: "#",
+          title: "API Keys",
+          url: "/dashboard/settings/api",
+        },
+      ],
+    },
+    {
+      title: "Help & Support",
+      url: "/dashboard/help",
+      icon: HelpCircle,
+      items: [
+        {
+          title: "Documentation",
+          url: "/dashboard/help/docs",
+        },
+        {
+          title: "Contact Support",
+          url: "/dashboard/help/contact",
+        },
+        {
+          title: "System Status",
+          url: "/dashboard/help/status",
         },
       ],
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session } = useSession();
+
+  const userData = {
+    name: session?.user?.name || "Admin User",
+    email: session?.user?.email || "admin@xpertfarmer.com",
+    avatar: session?.user?.image || "/placeholder-user.jpg",
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher company={xpertFarmerData.company} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={xpertFarmerData.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
