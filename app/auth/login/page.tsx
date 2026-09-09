@@ -8,10 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { AlertCircle, Phone, Lock } from "lucide-react";
-import {
-  isValidKenyanPhoneNumber,
-  getPhoneNumberErrorMessage,
-} from "@/lib/utils/phone-formatter";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,26 +15,8 @@ export default function LoginPage() {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [phoneError, setPhoneError] = useState("");
-
-  const validatePhoneNumber = (value: string) => {
-    if (!value) {
-      setPhoneError("");
-      return true;
-    }
-
-    if (!isValidKenyanPhoneNumber(value)) {
-      setPhoneError(getPhoneNumberErrorMessage(value));
-      return false;
-    }
-
-    setPhoneError("");
-    return true;
-  };
-
   const handlePhoneChange = (value: string) => {
     setPhoneNumber(value);
-    // validatePhoneNumber(value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,28 +24,16 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    // Basic validation
-    if (!phoneNumber.trim()) {
-      setError("Phone number is required");
-      setLoading(false);
-      return;
-    }
-
-    if (!pin || pin.length < 4) {
-      setError("PIN must be at least 4 digits");
-      setLoading(false);
-      return;
-    }
-
     try {
       const result = await signIn("credentials", {
         phoneNumber,
         pin,
+        adminLogin: "true",
         redirect: false,
       });
 
       if (result?.error) {
-        setError("Invalid phone number or PIN");
+        setError("Invalid administrator credentials");
         return;
       }
 
@@ -90,7 +56,7 @@ export default function LoginPage() {
         <div className="p-8">
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold tracking-tight">XpertFarmer</h1>
-            <p className="text-muted-foreground mt-2">Admin Dashboard</p>
+            <p className="text-muted-foreground mt-2">Administrator sign in</p>
           </div>
 
           {error && (
@@ -107,24 +73,17 @@ export default function LoginPage() {
                 className="block text-sm font-medium flex items-center gap-2"
               >
                 <Phone className="h-4 w-4" />
-                Phone Number
+                Email or phone number
               </label>
               <Input
                 id="phoneNumber"
                 type="tel"
-                placeholder="0791033018 or 254791033018"
+                placeholder="admin@example.com or 254791033018"
                 value={phoneNumber}
                 onChange={(e) => handlePhoneChange(e.target.value)}
                 disabled={loading}
-                className={phoneError ? "border-destructive" : ""}
-                required
+                autoComplete="username"
               />
-              {phoneError && (
-                <p className="text-xs text-destructive mt-1">{phoneError}</p>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">
-                Use format: 0791033018, 254791033018, or +254791033018
-              </p>
             </div>
 
             <div className="space-y-2">
@@ -133,22 +92,19 @@ export default function LoginPage() {
                 className="block text-sm font-medium flex items-center gap-2"
               >
                 <Lock className="h-4 w-4" />
-                PIN
+                Password
               </label>
               <Input
                 id="pin"
                 type="password"
                 placeholder="••••"
                 value={pin}
-                onChange={(e) =>
-                  setPin(e.target.value.replace(/\D/g, "").slice(0, 6))
-                }
+                onChange={(e) => setPin(e.target.value)}
                 disabled={loading}
-                maxLength={6}
-                required
+                autoComplete="current-password"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Enter your 4-6 digit PIN
+                Use your administrator password.
               </p>
             </div>
 

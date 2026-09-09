@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
 
-const nextAuthUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 const nextAuthSecret =
   process.env.NEXTAUTH_SECRET || "your-secret-key-change-in-production";
 

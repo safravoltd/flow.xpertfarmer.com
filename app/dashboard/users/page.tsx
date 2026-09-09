@@ -12,19 +12,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Search, Edit2, Trash2 } from "lucide-react";
+import { Plus, Search, Download, Loader2 } from "lucide-react";
 import { UsersTable } from "@/components/users/users-table";
 import { CreateUserDialog } from "@/components/users/create-user-dialog";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { fetchAllPages, downloadRowsAsExcel, exportDate } from "@/lib/export-excel";
+import type { User } from "@/lib/types/api";
 
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const searchParams = useSearchParams();
+
+  const exportUsers = async () => {
+    setIsExporting(true);
+    setExportError(null);
+    try {
+      const users = await fetchAllPages<User>("/users");
+      downloadRowsAsExcel(
+        users.map((user) => ({
+          ID: user.id,
+          "First name": user.firstName,
+          "Middle name": user.middleName ?? "",
+          "Last name": user.lastName,
+          Email: user.email,
+          Phone: user.phoneNumber,
+          Gender: user.gender,
+          "Date of birth": exportDate(user.dob),
+          "National ID": user.nationalId,
+          "Business number": user.businessNumber ?? "",
+          County: user.residenceCounty,
+          Location: user.residenceLocation,
+          Constituency: user.constituency || user.residenceConstituency,
+          "Years of experience": user.yearsOfExperience,
+          Verified: user.isVerified ? "Yes" : "No",
+          "Farm count": user.farms?.length ?? 0,
+          "Farm names": user.farms?.map((farm) => farm.name).join(", ") ?? "",
+          "Created at": exportDate(user.createdAt),
+          "Updated at": exportDate(user.updatedAt),
+        })),
+        "Users",
+        `xpert-farmer-users-${new Date().toISOString().slice(0, 10)}.xlsx`,
+      );
+    } catch (error) {
+      setExportError(error instanceof Error ? error.message : "Failed to export users");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <Suspense fallback={<Loading />}>
@@ -36,7 +77,12 @@ export default function UsersPage() {
               Manage system users and their permissions
             </p>
           </div>
+          <Button variant="outline" onClick={exportUsers} disabled={isExporting}>
+            {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            {isExporting ? "Exporting..." : "Export Excel"}
+          </Button>
         </div>
+        {exportError && <p className="text-sm text-destructive">{exportError}</p>}
 
         <Card className="p-6">
           <div className="space-y-4">

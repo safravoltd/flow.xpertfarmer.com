@@ -26,6 +26,7 @@ import {
 import { CustomersTable } from "@/components/billing/customers-table";
 import { InvoicesTable } from "@/components/billing/invoices-table";
 import { BillingStats } from "@/components/billing/billing-stats";
+import { BillingConfiguration } from "@/components/billing/billing-configuration";
 
 export default function BillingPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,7 +68,7 @@ export default function BillingPage() {
           className="space-y-6"
         >
           <div className="flex items-center justify-between">
-            <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsList className="grid w-full max-w-xl grid-cols-3">
               <TabsTrigger
                 value="customers"
                 className="flex items-center gap-2"
@@ -79,6 +80,7 @@ export default function BillingPage() {
                 <FileText className="h-4 w-4" />
                 Invoices
               </TabsTrigger>
+              <TabsTrigger value="configuration" className="flex items-center gap-2">Configuration</TabsTrigger>
             </TabsList>
 
             {/* Search and Filters */}
@@ -148,6 +150,10 @@ export default function BillingPage() {
               searchTerm={searchTerm}
               statusFilter={statusFilter}
             />
+          </TabsContent>
+          <TabsContent value="configuration" className="space-y-4">
+            <div><h2 className="text-2xl font-semibold">Pricing and billing policy</h2><p className="text-muted-foreground">Configure trial, reminders, mixed-farming calculations, and migrate existing farmers.</p></div>
+            <BillingConfiguration />
           </TabsContent>
         </Tabs>
       </Card>

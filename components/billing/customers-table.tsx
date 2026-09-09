@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Customer } from "@/lib/types/billing";
+import { billingService } from "@/lib/services/billing.service";
 
 interface CustomersTableProps {
   searchTerm: string;
@@ -142,12 +143,13 @@ export function CustomersTable({
   const router = useRouter();
 
   useEffect(() => {
-    // TODO: Replace with actual API call
-    setLoading(true);
-    setTimeout(() => {
-      setCustomers(mockCustomers);
-      setLoading(false);
-    }, 1000);
+    const loadCustomers = async () => {
+      setLoading(true);
+      try { const response = await billingService.customers.getAll({ limit: 100 }); setCustomers(response.data); }
+      catch (error) { console.error("Failed to load billing customers:", error); }
+      finally { setLoading(false); }
+    };
+    loadCustomers();
   }, []);
 
   const filteredCustomers = customers.filter((customer) => {

@@ -14,6 +14,7 @@ import {
   XCircle,
 } from "lucide-react";
 import type { BillingStats as BillingStatsType } from "@/lib/types/billing";
+import { billingService } from "@/lib/services/billing.service";
 
 // Mock data - replace with actual API call
 const mockStats: BillingStatsType = {
@@ -33,22 +34,14 @@ export function BillingStats() {
   const [stats, setStats] = useState<BillingStatsType>(mockStats);
   const [loading, setLoading] = useState(false);
 
-  // TODO: Replace with actual API call
   useEffect(() => {
-    // const fetchStats = async () => {
-    //   setLoading(true);
-    //   try {
-    //     const response = await billingService.stats.getOverview();
-    //     if (response?.data) {
-    //       setStats(response.data);
-    //     }
-    //   } catch (error) {
-    //     console.error("Failed to fetch billing stats:", error);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-    // fetchStats();
+    const fetchStats = async () => {
+      setLoading(true);
+      try { const response = await billingService.stats.getOverview(); setStats(response.data); }
+      catch (error) { console.error("Failed to fetch billing stats:", error); }
+      finally { setLoading(false); }
+    };
+    fetchStats();
   }, []);
 
   const statCards = [

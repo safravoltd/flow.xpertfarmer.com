@@ -4,6 +4,7 @@ import type {
   Invoice,
   PaymentHistory,
   BillingStats,
+  BillingCustomerDetail,
   BillingApiResponse,
   PaginatedBillingResponse,
 } from "@/lib/types/billing";
@@ -12,6 +13,21 @@ import type {
  * API Service for Billing and Customers
  */
 export const billingService = {
+  plans: {
+    getAll: () =>
+      apiClient.get<
+        Array<{
+          id: string;
+          code: string;
+          name: string;
+          metric: string;
+          minValue?: number | null;
+          maxValue?: number | null;
+          monthlyAmount: number | string;
+          isActive: boolean;
+        }>
+      >("/billing/plans"),
+  },
   // Customer Management
   customers: {
     getAll: (params?: {
@@ -184,5 +200,74 @@ export const billingService = {
           installmentAmount?: number;
         }>
       >("/billing/calculator", data),
+  },
+
+  admin: {
+    getSettings: () =>
+      apiClient.get<{ key: string; value: string; description?: string }[]>(
+        "/billing/admin/settings",
+      ),
+    updateSetting: (key: string, value: string) =>
+      apiClient.patch(`/billing/admin/settings/${key}`, { value }),
+    savePlan: (data: {
+      code: string;
+      name: string;
+      metric: string;
+      minValue?: number;
+      maxValue?: number;
+      monthlyAmount: number;
+      isActive?: boolean;
+    }) => apiClient.post("/billing/admin/plans", data),
+    backfillAccounts: () =>
+      apiClient.post<{ scannedUsers: number; createdAccounts: number }>(
+        "/billing/admin/accounts/backfill",
+      ),
+    registerC2bUrls: () =>
+      apiClient.post("/billing/admin/payments/mpesa/c2b/register-urls"),
+    getCustomerDetails: (userId: string) =>
+      apiClient.get<BillingCustomerDetail>(
+        `/billing/admin/customers/${userId}`,
+      ),
+    provisionCustomer: (userId: string) =>
+      apiClient.post<BillingCustomerDetail>(
+        `/billing/admin/customers/${userId}/provision`,
+      ),
+    updateSubscriptionCycle: (
+      subscriptionId: string,
+      billingCycle: "MONTHLY" | "ANNUAL",
+    ) =>
+      apiClient.patch(`/billing/admin/subscriptions/${subscriptionId}`, {
+        billingCycle,
+      }),
+    initiateStkPush: (invoiceId: string, phoneNumber: string) =>
+      apiClient.post<{
+        paymentId: string;
+        checkoutRequestId: string;
+        customerMessage?: string;
+      }>(`/billing/admin/invoices/${invoiceId}/payments/mpesa/stk-push`, {
+        phoneNumber,
+      }),
+    createPlanInvoice: (
+      userId: string,
+      subscriptionId: string,
+      planId: string,
+    ) =>
+      apiClient.post<{ id: string; invoiceNumber: string }>(
+        `/billing/admin/customers/${userId}/invoices`,
+        { subscriptionId, planId },
+      ),
+    recordMpesaPayment: (
+      invoiceId: string,
+      data: { amount: number; receiptNumber: string; phoneNumber?: string },
+    ) =>
+      apiClient.post(
+        `/billing/admin/invoices/${invoiceId}/payments/mpesa/manual`,
+        data,
+      ),
+    overrideInvoicePlan: (invoiceId: string, planId: string) =>
+      apiClient.patch<{ id: string; invoiceNumber: string }>(
+        `/billing/admin/invoices/${invoiceId}/plan`,
+        { planId },
+      ),
   },
 };

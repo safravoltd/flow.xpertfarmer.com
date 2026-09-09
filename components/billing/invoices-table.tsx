@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Invoice } from "@/lib/types/billing";
+import { billingService } from "@/lib/services/billing.service";
 
 interface InvoicesTableProps {
   searchTerm: string;
@@ -126,16 +127,13 @@ export function InvoicesTable({
   const router = useRouter();
 
   useEffect(() => {
-    // TODO: Replace with actual API call
-    setLoading(true);
-    setTimeout(() => {
-      // Sort by due date (upcoming first)
-      const sortedInvoices = [...mockInvoices].sort(
-        (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
-      );
-      setInvoices(sortedInvoices);
-      setLoading(false);
-    }, 1000);
+    const loadInvoices = async () => {
+      setLoading(true);
+      try { const response = await billingService.invoices.getAll({ limit: 100 }); setInvoices(response.data); }
+      catch (error) { console.error("Failed to load invoices:", error); }
+      finally { setLoading(false); }
+    };
+    loadInvoices();
   }, []);
 
   const filteredInvoices = invoices.filter((invoice) => {

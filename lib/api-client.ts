@@ -31,6 +31,7 @@ export class ApiClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
+    await this.setToken()
     const url = `${this.baseUrl}${endpoint}`
 
     const response = await fetch(url, {

@@ -1,7 +1,5 @@
 import { DashboardOverview } from "@/components/dashboard/dashboard-overview";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
-import { TokenDebug } from "@/components/debug/token-debug";
-import { AuthDebug } from "@/components/debug/auth-debug";
 import { Card } from "@/components/ui/card";
 
 export default function DashboardPage() {

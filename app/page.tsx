@@ -16,7 +16,7 @@ export default function Home() {
       router.push("/dashboard");
     } else {
       // User is not authenticated, redirect to login
-      router.push("/auth/login");
+      router.push("/auth/admin/login");
     }
   }, [session, status, router]);
 

@@ -19,7 +19,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     console.log("[AuthGuard] Pathname:", pathname);
 
     // Define public routes that don't require authentication
-    const publicRoutes = ["/auth/login", "/auth/register"];
+    const publicRoutes = ["/auth/login", "/auth/admin/login", "/auth/register"];
     const isPublicRoute = publicRoutes.some((route) =>
       pathname.startsWith(route),
     );
@@ -31,7 +31,12 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     if (!session && !isPublicRoute) {
       console.log("[AuthGuard] No session, redirecting to login");
-      router.push("/auth/login");
+      router.push("/auth/admin/login");
+      return;
+    }
+
+    if (session && !isPublicRoute && (session.user as any)?.role !== "ADMIN") {
+      router.push("/auth/admin/login");
       return;
     }
 
@@ -49,7 +54,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     if (!session && pathname === "/") {
       console.log("[AuthGuard] No session on root, redirecting to login");
-      router.push("/auth/login");
+      router.push("/auth/admin/login");
       return;
     }
 
@@ -69,7 +74,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   // Define public routes that don't require authentication
-  const publicRoutes = ["/auth/login", "/auth/register"];
+  const publicRoutes = ["/auth/login", "/auth/admin/login", "/auth/register"];
   const isPublicRoute = publicRoutes.some((route) =>
     pathname.startsWith(route),
   );
@@ -82,6 +87,14 @@ export function AuthGuard({ children }: AuthGuardProps) {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
           <p className="text-muted-foreground">Redirecting to login...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (session && !isPublicRoute && (session.user as any)?.role !== "ADMIN") {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <p className="text-muted-foreground">Administrator access required...</p>
       </div>
     );
   }

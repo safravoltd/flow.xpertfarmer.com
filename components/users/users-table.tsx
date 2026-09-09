@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useApi } from "@/lib/hooks/use-api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2, Eye } from "lucide-react";
+import Link from "next/link";
 import type { User, ApiResponse } from "@/lib/types/api";
 
 interface UsersTableProps {
@@ -111,9 +112,15 @@ export function UsersTable({
                 </td>
                 <td className="py-3 px-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <Button variant="ghost" size="sm">
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
+                    <Link href={`/dashboard/users/${user.id}`}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        aria-label={`View ${name || "user"}`}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </Link>
                     <Button
                       variant="ghost"
                       size="sm"
