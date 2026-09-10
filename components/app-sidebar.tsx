@@ -10,6 +10,7 @@ import {
   Sprout,
   BarChart3,
   HelpCircle,
+  Download,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -52,6 +53,11 @@ const xpertFarmerData = {
       title: "Billing",
       url: "/dashboard/billing",
       icon: Briefcase,
+    },
+    {
+      title: "Data exports",
+      url: "/dashboard/exports",
+      icon: Download,
     },
     {
       title: "Analytics",

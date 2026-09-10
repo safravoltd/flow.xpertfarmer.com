@@ -12,6 +12,7 @@ import {
   TrendingUp,
   Settings,
   LogOut,
+  Download,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,11 @@ const navItems = [
     label: "Billing",
     href: "/dashboard/billing",
     icon: Briefcase,
+  },
+  {
+    label: "Data exports",
+    href: "/dashboard/exports",
+    icon: Download,
   },
 ];
 

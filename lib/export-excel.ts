@@ -37,6 +37,7 @@ export function downloadRowsAsExcel(
   rows: Record<string, unknown>[],
   sheetName: string,
   filename: string,
+  format: "xlsx" | "csv" = "xlsx",
 ) {
   const worksheet = XLSX.utils.json_to_sheet(rows);
   worksheet["!cols"] = Object.keys(rows[0] ?? {}).map((key) => ({
@@ -44,7 +45,7 @@ export function downloadRowsAsExcel(
   }));
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, sheetName.slice(0, 31));
-  XLSX.writeFile(workbook, filename);
+  XLSX.writeFile(workbook, filename, { bookType: format === "csv" ? "csv" : "xlsx" });
 }
 
 export function exportDate(value?: string | Date | null) {
