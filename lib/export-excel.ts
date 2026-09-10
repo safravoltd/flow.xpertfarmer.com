@@ -48,6 +48,27 @@ export function downloadRowsAsExcel(
   XLSX.writeFile(workbook, filename, { bookType: format === "csv" ? "csv" : "xlsx" });
 }
 
+export function downloadWorkbook(
+  sheets: { name: string; rows: Record<string, unknown>[] }[],
+  filename: string,
+) {
+  const workbook = XLSX.utils.book_new();
+  const usedNames = new Set<string>();
+  for (const sheet of sheets) {
+    const base = sheet.name.replace(/[\\/?*\[\]:]/g, " ").trim().slice(0, 31) || "Sheet";
+    let name = base;
+    let suffix = 2;
+    while (usedNames.has(name)) name = `${base.slice(0, 28)} (${suffix++})`;
+    usedNames.add(name);
+    const worksheet = XLSX.utils.json_to_sheet(sheet.rows);
+    worksheet["!cols"] = Object.keys(sheet.rows[0] ?? {}).map((key) => ({
+      wch: Math.min(Math.max(key.length + 2, 12), 36),
+    }));
+    XLSX.utils.book_append_sheet(workbook, worksheet, name);
+  }
+  XLSX.writeFile(workbook, filename, { bookType: "xlsx" });
+}
+
 export function exportDate(value?: string | Date | null) {
   if (!value) return "";
   const date = new Date(value);
