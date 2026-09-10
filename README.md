@@ -5,7 +5,7 @@ A professional, production-grade farm management and administration system built
 ## Features
 
 - **Authentication**: Secure NextAuth.js-based credential authentication
-- **User Management**: Create, edit, and manage system users with role-based access
+- **User Management**: Create, edit, and manage system users with role-based acces
 - **Farm Management**: Track and manage multiple farms with crop types and acreage
 - **Employee Management**: Manage farm employees with hire dates and positions
 - **Livestock Tracking**: Monitor animal health and inventory across farms
