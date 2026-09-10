@@ -13,7 +13,7 @@ A professional, production-grade farm management and administration system built
 - **Professional UI**: Clean, modern interface built with shadcn/ui components
 - **Real-time API Integration**: Full REST API integration with XpertFarmer backend
 
-## Project Structure
+## Project Structur
 
 ```
 ├── app/
