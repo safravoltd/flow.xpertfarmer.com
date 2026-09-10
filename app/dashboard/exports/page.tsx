@@ -1,26 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { fetchAllPages, downloadRowsAsExcel, exportDate } from "@/lib/export-excel";
-import type { Farm, User } from "@/lib/types/api";
+import { fetchAllPages, downloadRowsAsExcel } from "@/lib/export-excel";
+import { apiClient } from "@/lib/api-client";
 
-type Dataset = "users" | "farms";
+type Dataset = { key: string; label: string };
 
 function queryDate(value: string) {
   return value ? encodeURIComponent(value) : "";
 }
 
 export default function ExportsPage() {
-  const [dataset, setDataset] = useState<Dataset>("users");
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
+  const [dataset, setDataset] = useState("users");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [format, setFormat] = useState<"xlsx" | "csv">("xlsx");
   const [exporting, setExporting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    apiClient.get<Dataset[]>("/admin/exports/catalog")
+      .then((catalog) => {
+        setDatasets(catalog);
+        if (catalog.length && !catalog.some((item) => item.key === dataset)) setDataset(catalog[0].key);
+      })
+      .catch((catalogError) => setError(catalogError instanceof Error ? catalogError.message : "Unable to load export datasets"));
+  }, []);
 
   const runExport = async () => {
     if (from && to && from > to) {
@@ -35,40 +45,17 @@ export default function ExportsPage() {
         from && `createdFrom=${queryDate(from)}`,
         to && `createdTo=${queryDate(to)}`,
       ].filter(Boolean).join("&");
-      const records = dataset === "users"
-        ? await fetchAllPages<User>(`/users${dateQuery ? `?${dateQuery}` : ""}`)
-        : await fetchAllPages<Farm>(`/farms${dateQuery ? `?${dateQuery}` : ""}`);
-      const rows = dataset === "users"
-        ? (records as User[]).map((user) => ({
-            ID: user.id,
-            "First name": user.firstName,
-            "Middle name": user.middleName ?? "",
-            "Last name": user.lastName,
-            Email: user.email,
-            Phone: user.phoneNumber,
-            County: user.residenceCounty,
-            Location: user.residenceLocation,
-            Verified: user.isVerified ? "Yes" : "No",
-            "Farm count": user.farms?.length ?? 0,
-            "Farm names": user.farms?.map((farm) => farm.name).join(", ") ?? "",
-            "Created at": exportDate(user.createdAt),
-          }))
-        : (records as Farm[]).map((farm) => ({
-            ID: farm.id,
-            "Farm name": farm.name,
-            County: farm.county,
-            Location: farm.administrativeLocation,
-            "Size (acres)": farm.size,
-            Ownership: farm.ownership,
-            "Farming types": farm.farmingTypes?.join(", ") ?? "",
-            "Owner name": farm.user ? `${farm.user.firstName} ${farm.user.lastName}`.trim() : "",
-            "Owner phone": farm.user?.phoneNumber ?? "",
-            "Owner email": farm.user?.email ?? "",
-            "Created at": exportDate(farm.createdAt),
-          }));
+      const records = await fetchAllPages<Record<string, unknown>>(`/admin/exports/${dataset}${dateQuery ? `?${dateQuery}` : ""}`);
+      const rows = records.map((record) => Object.fromEntries(
+        Object.entries(record).map(([key, value]) => [
+          key,
+          value && typeof value === "object" ? JSON.stringify(value) : value,
+        ]),
+      ));
       const suffix = format === "csv" ? "csv" : "xlsx";
-      downloadRowsAsExcel(rows, dataset === "users" ? "Users" : "Farms", `xpert-farmer-${dataset}-${new Date().toISOString().slice(0, 10)}.${suffix}`, format);
-      setMessage(`Exported ${rows.length.toLocaleString()} ${dataset}.`);
+      const label = datasets.find((item) => item.key === dataset)?.label ?? dataset;
+      downloadRowsAsExcel(rows, label, `xpert-farmer-${dataset}-${new Date().toISOString().slice(0, 10)}.${suffix}`, format);
+      setMessage(`Exported ${rows.length.toLocaleString()} ${label.toLowerCase()}.`);
     } catch (exportError) {
       setError(exportError instanceof Error ? exportError.message : "Export failed");
     } finally {
@@ -86,9 +73,8 @@ export default function ExportsPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="space-y-2 text-sm font-medium">
             Dataset
-            <select className="h-10 w-full rounded-md border bg-background px-3" value={dataset} onChange={(event) => setDataset(event.target.value as Dataset)}>
-              <option value="users">Users</option>
-              <option value="farms">Farms</option>
+            <select className="h-10 w-full rounded-md border bg-background px-3" value={dataset} onChange={(event) => setDataset(event.target.value)}>
+              {datasets.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}
             </select>
           </label>
           <label className="space-y-2 text-sm font-medium">
