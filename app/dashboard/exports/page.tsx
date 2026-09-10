@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { fetchAllPages, downloadRowsAsExcel, downloadWorkbook } from "@/lib/export-excel";
+import { fetchAllPages, downloadRowsAsExcel } from "@/lib/export-excel";
 import { apiClient } from "@/lib/api-client";
 
 type Dataset = { key: string; label: string };
@@ -77,24 +77,25 @@ export default function ExportsPage() {
         to && `to=${queryDate(to)}`,
       ].filter(Boolean).join("&");
       if (dataset === "__all__" && format === "csv") throw new Error("All datasets must be exported as an Excel workbook with separate worksheets.");
+      if (dataset === "__all__") {
+        const endpoint = `/admin/exports/all${dateQuery ? `?${dateQuery}` : ""}`;
+        await apiClient.downloadFile(endpoint, `xpert-farmer-all-data-${new Date().toISOString().slice(0, 10)}.xlsx`);
+        setMessage("Exported all datasets into one workbook.");
+        return;
+      }
       const references = await Promise.all([
         fetchAllPages<ExportRow>(`/admin/exports/farms${dateQuery ? `?${dateQuery}` : ""}`),
         fetchAllPages<ExportRow>(`/admin/exports/users${dateQuery ? `?${dateQuery}` : ""}`),
       ]);
-      const selected = dataset === "__all__" ? datasets : datasets.filter((item) => item.key === dataset);
+      const selected = datasets.filter((item) => item.key === dataset);
       const sheets = await Promise.all(selected.map(async (item) => {
         const records = await fetchAllPages<ExportRow>(`/admin/exports/${item.key}${dateQuery ? `?${dateQuery}` : ""}`);
         return { name: item.label, rows: addRelationships(records.map(flattenRow), ...references) };
       }));
-      if (dataset === "__all__") {
-        downloadWorkbook(sheets, `xpert-farmer-all-data-${new Date().toISOString().slice(0, 10)}.xlsx`);
-        setMessage(`Exported ${sheets.length} datasets into one workbook.`);
-      } else {
-        const sheet = sheets[0];
-        const suffix = format === "csv" ? "csv" : "xlsx";
-        downloadRowsAsExcel(sheet.rows, sheet.name, `xpert-farmer-${dataset}-${new Date().toISOString().slice(0, 10)}.${suffix}`, format);
-        setMessage(`Exported ${sheet.rows.length.toLocaleString()} ${sheet.name.toLowerCase()}.`);
-      }
+      const sheet = sheets[0];
+      const suffix = format === "csv" ? "csv" : "xlsx";
+      downloadRowsAsExcel(sheet.rows, sheet.name, `xpert-farmer-${dataset}-${new Date().toISOString().slice(0, 10)}.${suffix}`, format);
+      setMessage(`Exported ${sheet.rows.length.toLocaleString()} ${sheet.name.toLowerCase()}.`);
     } catch (exportError) {
       setError(exportError instanceof Error ? exportError.message : "Export failed");
     } finally {

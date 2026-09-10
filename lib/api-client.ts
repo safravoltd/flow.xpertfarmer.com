@@ -78,6 +78,24 @@ export class ApiClient {
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: 'DELETE' })
   }
+
+  async downloadFile(endpoint: string, fallbackFilename: string) {
+    await this.setToken()
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    })
+    if (!response.ok) throw new Error(`Download failed: ${response.statusText}`)
+    const blob = await response.blob()
+    const disposition = response.headers.get('content-disposition')
+    const filename = disposition?.match(/filename="?([^";]+)"?/i)?.[1] || fallbackFilename
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = filename
+    anchor.click()
+    URL.revokeObjectURL(url)
+  }
 }
 
 export const apiClient = new ApiClient()
